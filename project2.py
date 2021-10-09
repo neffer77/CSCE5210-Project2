@@ -56,12 +56,12 @@ class divisions:
         self.thirteen = node()
         self.fourteen = node()
         self.fifteen = node()
-        addNames()
-        addAdjacents()
+        self.addNames()
+        self.addAdjacents()
         
         
         
-    def addNames():
+    def addNames(self):
         self.one.setName("1")
         self.two.setName("2")
         self.three.setName("3")
@@ -78,14 +78,14 @@ class divisions:
         self.fourteen.setName("14")
         self.fifteen.setName("15")
         
-    def addAdjacents():
-        self.one.setAdjacentNodes([{'name':'2', 'cost':20},{'name':'3' 'cost':20}])
-        self.two.setAdjacentNodes([{'name':'4', 'cost':20},{'name':'5' 'cost':30},{'name':'1', 'cost':20}])
-        self.three.setAdjacentNodes([{'name':'6', 'cost':40},{'name':'7' 'cost':10},{'name':'1', 'cost':20}])
-        self.four.setAdjacentNodes([{'name':'2', 'cost':20},{'name':'8' 'cost':10},{'name':'9', 'cost':20}])
-        self.five.setAdjacentNodes([{'name':'2', 'cost':30},{'name':'10' 'cost':30},{'name':'11', 'cost':20}])
-        self.six.setAdjacentNodes([{'name':'3', 'cost':40},{'name':'12' 'cost':30},{'name':'13', 'cost':20}])
-        self.seven.setAdjacentNodes([{'name':'3', 'cost':10},{'name':'14' 'cost':20},{'name':'15', 'cost':20}])
+    def addAdjacents(self):
+        self.one.setAdjacentNodes([{'name':'2', 'cost':20},{'name':'3', 'cost':20}])
+        self.two.setAdjacentNodes([{'name':'4', 'cost':20},{'name':'5', 'cost':30},{'name':'1', 'cost':20}])
+        self.three.setAdjacentNodes([{'name':'6', 'cost':40},{'name':'7', 'cost':10},{'name':'1', 'cost':20}])
+        self.four.setAdjacentNodes([{'name':'2', 'cost':20},{'name':'8', 'cost':10},{'name':'9', 'cost':20}])
+        self.five.setAdjacentNodes([{'name':'2', 'cost':30},{'name':'10', 'cost':30},{'name':'11', 'cost':20}])
+        self.six.setAdjacentNodes([{'name':'3', 'cost':40},{'name':'12', 'cost':30},{'name':'13', 'cost':20}])
+        self.seven.setAdjacentNodes([{'name':'3', 'cost':10},{'name':'14', 'cost':20},{'name':'15', 'cost':20}])
         self.eight.setAdjacentNodes([{'name':'4', 'cost':10}])
         self.nine.setAdjacentNodes([{'name':'4', 'cost':20}])
         self.ten.setAdjacentNodes([{'name':'5', 'cost':30}])
