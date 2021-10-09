@@ -95,6 +95,16 @@ class divisions:
         self.fourteen.setAdjacentNodes([{'name':'7', 'cost':20}])
         self.fifteen.setAdjacentNodes([{'name':'7', 'cost':20}])
 
+class agent:
+    def __init__(self,agentFunction,percept):
+        self.location = "1"
+        self.agentFunction = agentFunction
+        self.percept = percept
+        
+class warehouse:
+    def __init__(self):
+    
+
 def main():
     a = node()
     
