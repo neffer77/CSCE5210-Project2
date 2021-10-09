@@ -104,6 +104,11 @@ class agent:
 class warehouse:
     def __init__(self):
     
+class agentFunction:
+    def __init__(self):
+        
+class percept:
+    def __init__(self):
 
 def main():
     a = node()
