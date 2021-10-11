@@ -4,6 +4,7 @@ Created on Sat Oct  9 14:32:54 2021
 
 @author: conno
 """
+import random as rand
 
 class node:
     
@@ -58,6 +59,7 @@ class divisions:
         self.fifteen = node()
         self.addNames()
         self.addAdjacents()
+        self.divisionsDict = self.addToDict()
         
         
         
@@ -94,21 +96,92 @@ class divisions:
         self.thirteen.setAdjacentNodes([{'name':'6', 'cost':20}])
         self.fourteen.setAdjacentNodes([{'name':'7', 'cost':20}])
         self.fifteen.setAdjacentNodes([{'name':'7', 'cost':20}])
+        
+    def addToDict(self):
+        d = {}
+        d[self.one.name] = self.one
+        d[self.two.name] = self.two
+        d[self.three.name] = self.three
+        d[self.four.name] = self.four
+        d[self.five.name] = self.five
+        d[self.six.name] = self.six
+        d[self.seven.name] = self.seven
+        d[self.eight.name] = self.eight
+        d[self.nine.name] = self.nine
+        d[self.ten.name] = self.ten
+        d[self.eleven.name] = self.eleven
+        d[self.twelve.name] = self.twelve
+        d[self.thirteen.name] = self.thirteen
+        d[self.fourteen.name] = self.fourteen
+        d[self.fifteen.name] = self.fifteen
+        
+    def generateChildNodes(self):
+    
+    def generateParentNodes(self):
+        
+    def clearChildNodes(self):
+    
+    def clearParentNodes(self):
+    
 
 class agent:
     def __init__(self,agentFunction,percept):
-        self.location = "1"
         self.agentFunction = agentFunction
         self.percept = percept
         
-class warehouse:
-    def __init__(self):
-    
-class agentFunction:
-    def __init__(self):
+#class warehouse:
+    #def __init__(self):
+       
+class customerOrder:
+    def __init__(self,random):
+        self.rand = random
+        self.division = ""
+        self.shelves = []
         
-class percept:
-    def __init__(self):
+    def generateDivision(self):
+        self.division = self.rand.randint(1,15)
+    
+    def generateShelves(self):
+        check = False
+        while check:
+            shelve = self.rand.randint(1,63)
+            if shelve not in self.shelves:
+                self.shelves.append(shelve)
+            if len(self.shelves) == 3:
+                check = True
+    def clearDivision(self):
+        self.division = ""
+    
+    def clearShelves(self):
+        self.shelves = []
+    
+
+class agentFunction:
+    
+    def __init__(self,customerOrder,divisions):
+        self.location = "1"
+        self.customerOrder = customerOrder
+        self.divisions = divisions
+        
+    def idsDivision(self,loc):
+        depthBound = 0
+        frontier = []
+        goal = False
+        frontier.append(self.location)
+        
+        while goal:
+            n = frontier.pop(0)
+            if n == self.customerOrder.division:
+                goal = True
+            
+            self.divisions.gener
+            ##how expand depth bound 
+            ##how to expand nodes
+            
+            
+        
+#class percept:
+ #   def __init__(self):
 
 def main():
     a = node()

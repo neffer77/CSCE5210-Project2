@@ -1,0 +1,14 @@
+ #list = []
+        #for i in range 64
+            #a = obj
+            #obj.name is i
+            #list.append(obj)
+            
+        #for i in range 64
+            obj.parentnode =  obj.name /2 round down
+            
+        for i in range 64:
+            for j in range 64:
+                if list[i] contain parent node:
+                    list[j] == parentnode
+                    add childnode
