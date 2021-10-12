@@ -115,14 +115,26 @@ class divisions:
         d[self.fourteen.name] = self.fourteen
         d[self.fifteen.name] = self.fifteen
         
-    def generateChildNodes(self):
-    
-    def generateParentNodes(self):
+    def generateChildNodes(self,currLoc):
+        node = self.divisionsDict[currLoc]
+        node.childnodes = node.adjacentnodes
+        
+        
+    def generateParentNodes(self,currLoc):
+        node = self.divisionsDict[currLoc]
+        for i in node.childnodes:
+            child = self.divisionsDict[i[name]]
+            child.parentnode = n
+            
         
     def clearChildNodes(self):
-    
+        for i in self.divisionsDict:
+            i.childnodes = []
+            
+            
     def clearParentNodes(self):
-    
+        for i in self.divisionsDict:
+            i.parentnode = ""
 
 class agent:
     def __init__(self,agentFunction,percept):
@@ -163,20 +175,30 @@ class agentFunction:
         self.customerOrder = customerOrder
         self.divisions = divisions
         
-    def idsDivision(self,loc):
+    def idsDivision(self):
         depthBound = 0
         frontier = []
         goal = False
         frontier.append(self.location)
-        
+        expand = []
+        n = ""
+        cost = ""
         while goal:
             n = frontier.pop(0)
             if n == self.customerOrder.division:
                 goal = True
+                return n
+                
+            self.divisions.generateChildNodes(n)
+            self.divisions.generateParentNodes(n)
             
-            self.divisions.gener
-            ##how expand depth bound 
-            ##how to expand nodes
+            for i in n.childnodes:
+                expand.append(i)
+            
+            if len(frontier) == 0:
+                frontier = expand
+                depthBound = depthBound + 1
+                
             
             
         
