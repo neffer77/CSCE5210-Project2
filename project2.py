@@ -114,11 +114,12 @@ class divisions:
         d[self.thirteen.name] = self.thirteen
         d[self.fourteen.name] = self.fourteen
         d[self.fifteen.name] = self.fifteen
+        return d
         
     def generateChildNodes(self,currLoc):
         node = self.divisionsDict[currLoc]
         for i in node.adjacentnodes:
-            if not i['name'].equals(node.name):
+            if not i['name'] == node.parentnode:
                 node.childnodes.append(self.divisionsDict[i['name']])
         
         
@@ -128,15 +129,11 @@ class divisions:
             i.parentnode = node.name
             
         
-    def clearChildNodes(self):
-        for i in self.divisionsDict:
-            i.childnodes = []
+    def clearChildNodes(self,currLoc):
+       node = self.divisionsDict[currLoc]
+       node.childnodes.clear()
             
-            
-    def clearParentNodes(self):
-        for i in self.divisionsDict:
-            i.parentnode = ""
-
+        
 class agent:
     def __init__(self,agentFunction,percept):
         self.agentFunction = agentFunction
@@ -183,46 +180,75 @@ class agentFunction:
         depthBound = 0
         frontier = []
         goal = False
-        frontier.append(self.location)
-        expand = []
+        frontier.append({'loc':self.location, 'depth':0})
         n = ""
         l = 0 
-        while goal:
+        while not goal:
             n = frontier.pop(0)
-            if n == self.customerOrder.division:
+            if n['loc'] == str(self.customerOrder.division):
                 goal = True
-                self.visited.append(n)
-                self.calculateCost()
-                return n,self.visited
+                self.visited.append(n['loc'])
+                self.calculateCost(n)
+                self.clearExcessCost(n)
+                return n
 
                 
-            self.visited.append(n)
-            self.calculateCost()
-            if l < depthBound:
-                self.divisions.generateChildNodes(n)
-                self.divisions.generateParentNodes(n)
-                for i in n.childnodes:
-                    frontier.append(i.name)
-                l = l + 1
+            self.visited.append(n['loc'])
+            self.calculateCost(n)
+            if n['depth'] < depthBound:
+                self.divisions.clearChildNodes(n['loc'])
+                self.divisions.generateChildNodes(n['loc'])
+                self.divisions.generateParentNodes(n['loc'])
+                s = 0
+                l = n['depth'] + 1
+                for i in self.divisions.divisionsDict[n['loc']].childnodes:
+                    frontier.insert(s,{'loc':i.name, 'depth':l})
+                    s = s + 1
             if len(frontier) == 0:
-                frontier.append(self.location)
+                frontier.append({'loc':self.location, 'depth':0})
                 depthBound = depthBound + 1
                 l = 0
     
     #counted forward and backward and combined
-    def calculateCost(self):
+    def calculateCost(self,goal,frontier,n,depthBound):
         for i in self.visited:
             v = self.visited.pop(0)
             node = self.divisions.divisionsDict[v]
             if node.parentnode == "":
                 self.cost = self.cost + 0
-            else:
+            elif goal == True:
                 for i in self.divisions.divisionsDict[node.name].adjacentnodes:
-                    if i['name'] == node.name:
-                        self.cost = self.cost + (int(i['cost'])*2)
-            
-                        
+                    if i['name'] == node.parentnode:
+                        self.cost = self.cost + int(i['cost'])
+            else:
+                #add cost to reach node
+                for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                        if i['name'] == node.parentnode:
+                            self.cost = self.cost + int(i['cost'])
+                
+                #add cost to go back to parent node
+                if n['depth'] == depthBound:
+                    for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                        if i['name'] == node.parentnode:
+                            self.cost = self.cost + int(i['cost'])
         
+                #add cost to traverse to other side of the tree    
+                if len(frontier) > 0:
+                        t = node
+                        while self.divisions.divisionsDict[frontier[0]].parentnode != t.parentnode:
+                                t = self.divisions.divisionsDict[t.parentnode]
+                                for i in self.divisions.divisionsDict[t.name].adjacentnodes:
+                                    if i['name'] == t.parentnode:
+                                        self.cost = self.cost + int(i['cost'])
+                if len(frontier) == 0:
+                    t = node
+                    while t.parentnode != '':
+                        t = self.divisions.divisionsDict[t.parentnode]
+                            for i in self.divisions.divisionsDict[t.name].adjacentnodes:
+                                    if i['name'] == t.parentnode:
+                                        self.cost = self.cost + int(i['cost'])
+   
+         
                 
             
             
@@ -231,8 +257,15 @@ class agentFunction:
  #   def __init__(self):
 
 def main():
-    a = node()
-    
+   order = customerOrder(rand)
+   order.generateDivision()
+   
+   division = divisions()
+   af = agentFunction(order, division)
+   
+   goal = af.idsDivision()
+   print (goal)
+   print (af.cost)
     
 if __name__ == "__main__":
     main()
