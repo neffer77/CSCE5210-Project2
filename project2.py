@@ -117,14 +117,15 @@ class divisions:
         
     def generateChildNodes(self,currLoc):
         node = self.divisionsDict[currLoc]
-        node.childnodes = node.adjacentnodes
+        for i in node.adjacentnodes:
+            if not i['name'].equals(node.name):
+                node.childnodes.append(self.divisionsDict[i['name']])
         
         
     def generateParentNodes(self,currLoc):
         node = self.divisionsDict[currLoc]
         for i in node.childnodes:
-            child = self.divisionsDict[i[name]]
-            child.parentnode = n
+            i.parentnode = node.name
             
         
     def clearChildNodes(self):
@@ -161,6 +162,7 @@ class customerOrder:
                 self.shelves.append(shelve)
             if len(self.shelves) == 3:
                 check = True
+                
     def clearDivision(self):
         self.division = ""
     
@@ -174,6 +176,8 @@ class agentFunction:
         self.location = "1"
         self.customerOrder = customerOrder
         self.divisions = divisions
+        self.cost = 0
+        self.visited = []
         
     def idsDivision(self):
         depthBound = 0
@@ -182,22 +186,43 @@ class agentFunction:
         frontier.append(self.location)
         expand = []
         n = ""
-        cost = ""
+        l = 0 
         while goal:
             n = frontier.pop(0)
             if n == self.customerOrder.division:
                 goal = True
-                return n
+                self.visited.append(n)
+                self.calculateCost()
+                return n,self.visited
+
                 
-            self.divisions.generateChildNodes(n)
-            self.divisions.generateParentNodes(n)
-            
-            for i in n.childnodes:
-                expand.append(i)
-            
+            self.visited.append(n)
+            self.calculateCost()
+            if l < depthBound:
+                self.divisions.generateChildNodes(n)
+                self.divisions.generateParentNodes(n)
+                for i in n.childnodes:
+                    frontier.append(i.name)
+                l = l + 1
             if len(frontier) == 0:
-                frontier = expand
+                frontier.append(self.location)
                 depthBound = depthBound + 1
+                l = 0
+    
+    #counted forward and backward and combined
+    def calculateCost(self):
+        for i in self.visited:
+            v = self.visited.pop(0)
+            node = self.divisions.divisionsDict[v]
+            if node.parentnode == "":
+                self.cost = self.cost + 0
+            else:
+                for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                    if i['name'] == node.name:
+                        self.cost = self.cost + (int(i['cost'])*2)
+            
+                        
+        
                 
             
             
