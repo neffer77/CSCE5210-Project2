@@ -234,16 +234,16 @@ class agentFunction:
                 for i in self.divisions.divisionsDict[node.name].adjacentnodes:
                     if i['name'] == node.parentnode:
                         self.cost = self.cost + int(i['cost'])
-                        print("From " + node.name + " to " i['name'] + "Cost: " + i['cost'])
+                       
                 
                 #add cost to go back to parent node
                 if n['depth'] == depthBound:
                     for i in self.divisions.divisionsDict[node.name].adjacentnodes:
                         if i['name'] == node.parentnode:
                             self.cost = self.cost + int(i['cost'])
-                            print("From " + i['name'] + " to " node.name)
+                            
         
-                #add cost to traverse to other side of the tree    
+                #add cost to traverse to other side of the tree
                 if len(frontier) > 0 and self.divisions.divisionsDict[node.parentnode].parentnode != '':
                         #print (node.name)
                         t = node
@@ -252,6 +252,8 @@ class agentFunction:
                                 for i in self.divisions.divisionsDict[t.name].adjacentnodes:
                                     if i['name'] == t.parentnode:
                                         self.cost = self.cost + int(i['cost'])
+                
+                #add cost to traverse back from right side of tree
                 if len(frontier) == 0:
                     t = node
                     while self.divisions.divisionsDict[t.parentnode].parentnode != '':
@@ -259,11 +261,13 @@ class agentFunction:
                         for i in self.divisions.divisionsDict[t.name].adjacentnodes:
                             if i['name'] == t.parentnode:
                                 self.cost = self.cost + int(i['cost'])
-                                
+                               
+                #add cost to traverse back from a node with no children                
                 if n['depth'] != depthBound and len(self.divisions.divisionsDict[node.name].childnodes) == 0:
                     for i in self.divisions.divisionsDict[node.name].adjacentnodes:
                         if i['name'] == node.parentnode:
                             self.cost = self.cost + int(i['cost'])
+                            
    
          
     def addToPathMem(self,dest):
@@ -286,7 +290,6 @@ class agentFunction:
             if currLoc in i and dest in i:
                 if i.index(currLoc) > i.index(dest):
                     if self.location != currLoc:
-                        self.divisions.divisionsDict[currLoc].parentnode = i[(i.index(currLoc) - 1)]
                         for k in self.divisions.divisionsDict[currLoc].adjacentnodes:
                             if k['name'] == self.divisions.divisionsDict[currLoc].parentnode:
                                 self.cost = self.cost + int(k['cost'])
@@ -299,7 +302,6 @@ class agentFunction:
                     return dest
                 else:
                     if self.location != currLoc:
-                        self.divisions.divisionsDict[currLoc].parentnode = i[(i.index(currLoc) + 1)]
                         for k in self.divisions.divisionsDict[currLoc].adjacentnodes:
                             if k['name'] == self.divisions.divisionsDict[currLoc].parentnode:
                                 self.cost = self.cost + int(k['cost'])
