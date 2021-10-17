@@ -132,6 +132,10 @@ class divisions:
     def clearChildNodes(self,currLoc):
        node = self.divisionsDict[currLoc]
        node.childnodes.clear()
+       
+    def clearParentNodes(self,currLoc):
+        node = self.divisionsDict[currLoc]
+        node.parentnode = ''
             
         
 class agent:
@@ -149,7 +153,8 @@ class customerOrder:
         self.shelves = []
         
     def generateDivision(self):
-        self.division = self.rand.randint(1,15)
+        div = self.rand.randint(1,15)
+        self.division = div
     
     def generateShelves(self):
         check = False
@@ -175,6 +180,7 @@ class agentFunction:
         self.divisions = divisions
         self.cost = 0
         self.visited = []
+        self.pathMem = []
         
     def idsDivision(self):
         depthBound = 0
@@ -235,7 +241,7 @@ class agentFunction:
         
                 #add cost to traverse to other side of the tree    
                 if len(frontier) > 0 and self.divisions.divisionsDict[node.parentnode].parentnode != '':
-                        print (node.name)
+                        #print (node.name)
                         t = node
                         while self.divisions.divisionsDict[frontier[0]['loc']].parentnode != t.parentnode and self.divisions.divisionsDict[frontier[0]['loc']].parentnode != t.name :
                                 t = self.divisions.divisionsDict[t.parentnode]
@@ -251,8 +257,15 @@ class agentFunction:
                                 self.cost = self.cost + int(i['cost'])
    
          
-                
-            
+    def addToPathMem(self,dest):
+        path = []
+        node = self.divisions.divisionsDict[dest['loc']]
+        path.append(node.name)
+        while node.parentnode != '':
+            node = self.divisions.divisionsDict[node.parentnode]
+            path.append(node.name)
+        self.pathMem.append(path)
+              
             
         
 #class percept:
@@ -266,8 +279,21 @@ def main():
    af = agentFunction(order, division)
    
    goal = af.idsDivision()
+   af.addToPathMem(goal)
+   print(af.pathMem)
    print (goal)
    print (af.cost)
+   
+   order.generateDivision()
+   af.location = goal['loc']
+   af.cost = 0
+   division.clearParentNodes(af.location)
+   goal = af.idsDivision()
+   af.addToPathMem(goal)
+   print(af.pathMem)
+   print (goal)
+   print (af.cost)
+   
     
 if __name__ == "__main__":
     main()
