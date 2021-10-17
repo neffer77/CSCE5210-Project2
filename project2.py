@@ -195,8 +195,10 @@ class agentFunction:
                 goal = True
                 self.visited.append(n['loc'])
                 self.calculateCost(goal, frontier,n,depthBound)
-                return n
-
+                return n['loc']
+            
+            if self.checkPath(str(self.customerOrder.division),n['loc']):
+                return self.goToDest(str(self.customerOrder.division), n['loc'])
                 
             if n['depth'] < depthBound:
                 self.divisions.clearChildNodes(n['loc'])
@@ -232,12 +234,14 @@ class agentFunction:
                 for i in self.divisions.divisionsDict[node.name].adjacentnodes:
                     if i['name'] == node.parentnode:
                         self.cost = self.cost + int(i['cost'])
+                        print("From " + node.name + " to " i['name'] + "Cost: " + i['cost'])
                 
                 #add cost to go back to parent node
                 if n['depth'] == depthBound:
                     for i in self.divisions.divisionsDict[node.name].adjacentnodes:
                         if i['name'] == node.parentnode:
                             self.cost = self.cost + int(i['cost'])
+                            print("From " + i['name'] + " to " node.name)
         
                 #add cost to traverse to other side of the tree    
                 if len(frontier) > 0 and self.divisions.divisionsDict[node.parentnode].parentnode != '':
@@ -255,18 +259,59 @@ class agentFunction:
                         for i in self.divisions.divisionsDict[t.name].adjacentnodes:
                             if i['name'] == t.parentnode:
                                 self.cost = self.cost + int(i['cost'])
+                                
+                if n['depth'] != depthBound and len(self.divisions.divisionsDict[node.name].childnodes) == 0:
+                    for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                        if i['name'] == node.parentnode:
+                            self.cost = self.cost + int(i['cost'])
    
          
     def addToPathMem(self,dest):
         path = []
-        node = self.divisions.divisionsDict[dest['loc']]
+        node = self.divisions.divisionsDict[dest]
         path.append(node.name)
         while node.parentnode != '':
             node = self.divisions.divisionsDict[node.parentnode]
             path.append(node.name)
         self.pathMem.append(path)
-              
-            
+    
+    def checkPath(self,dest,currLoc):
+        for i in self.pathMem:
+            if currLoc in i and dest in i:
+                return True
+        return False
+
+    def goToDest(self, dest, currLoc):
+        for i in self.pathMem:
+            if currLoc in i and dest in i:
+                if i.index(currLoc) > i.index(dest):
+                    if self.location != currLoc:
+                        self.divisions.divisionsDict[currLoc].parentnode = i[(i.index(currLoc) - 1)]
+                        for k in self.divisions.divisionsDict[currLoc].adjacentnodes:
+                            if k['name'] == self.divisions.divisionsDict[currLoc].parentnode:
+                                self.cost = self.cost + int(k['cost'])
+                    for j in range(i.index(currLoc), (i.index(dest)),-1):
+                        self.divisions.divisionsDict[i[j-1]].parentnode = self.divisions.divisionsDict[i[j]].name
+                        
+                        for k in self.divisions.divisionsDict[i[j-1]].adjacentnodes:
+                            if k['name'] == self.divisions.divisionsDict[i[j-1]].parentnode:
+                                self.cost = self.cost + int(k['cost'])
+                    return dest
+                else:
+                    if self.location != currLoc:
+                        self.divisions.divisionsDict[currLoc].parentnode = i[(i.index(currLoc) + 1)]
+                        for k in self.divisions.divisionsDict[currLoc].adjacentnodes:
+                            if k['name'] == self.divisions.divisionsDict[currLoc].parentnode:
+                                self.cost = self.cost + int(k['cost'])
+                    
+                    
+                    for j in range(i.index(currLoc), (i.index(dest))):
+                        
+                        self.divisions.divisionsDict[i[j+1]].parentnode = self.divisions.divisionsDict[i[j]].name
+                        for k in self.divisions.divisionsDict[i[j+1]].adjacentnodes:
+                            if k['name'] == self.divisions.divisionsDict[i[j+1]].parentnode:
+                                self.cost = self.cost + int(k['cost'])
+                    return dest
         
 #class percept:
  #   def __init__(self):
@@ -277,7 +322,7 @@ def main():
    
    division = divisions()
    af = agentFunction(order, division)
-   
+   print ("Start: " + af.location)
    goal = af.idsDivision()
    af.addToPathMem(goal)
    print(af.pathMem)
@@ -285,7 +330,41 @@ def main():
    print (af.cost)
    
    order.generateDivision()
-   af.location = goal['loc']
+   af.location = goal
+   print ("Start: " + af.location)
+   af.cost = 0
+   division.clearParentNodes(af.location)
+   goal = af.idsDivision()
+   af.addToPathMem(goal)
+   print(af.pathMem)
+   print (goal)
+   print (af.cost)
+   
+   order.generateDivision()
+   af.location = goal
+   print ("Start: " + af.location)
+   af.cost = 0
+   division.clearParentNodes(af.location)
+   goal = af.idsDivision()
+   af.addToPathMem(goal)
+   print(af.pathMem)
+   print (goal)
+   print (af.cost)
+   
+   order.generateDivision()
+   af.location = goal
+   print ("Start: " + af.location)
+   af.cost = 0
+   division.clearParentNodes(af.location)
+   goal = af.idsDivision()
+   af.addToPathMem(goal)
+   print(af.pathMem)
+   print (goal)
+   print (af.cost)
+   
+   order.generateDivision()
+   af.location = goal
+   print ("Start: " + af.location)
    af.cost = 0
    division.clearParentNodes(af.location)
    goal = af.idsDivision()
