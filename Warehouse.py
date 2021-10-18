@@ -234,8 +234,19 @@ class WarehouseagentFunction:
                     return dest
         
                 
-    def returnToDoor(self):
-        a =0
+    def returnToDoor(self, goal):
+        reached = True
+        node = self.warehouse.shelvesdictionary[goal]
+        while reached:
+            arr = []
+            for i in node.adjacentnodes:
+                arr.append(int(i['name']))
+            arr.sort()
+            node = self.warehouse.shelvesdictionary[str(arr[0])]
+            self.cost = self.cost + 1
+            if node.name == '1':
+                return False
+        
          
 '''
 division names |    warehouse names
@@ -263,7 +274,7 @@ def main():
     #print(b.name)  #prints the node name
     item = agent.idsWarehouse()
     agent.addToWarehousePathMem(item)
-    
+    agent.returnToDoor(item)
     agent.shelfNum = 1
     item2 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item2)
