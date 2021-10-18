@@ -105,7 +105,8 @@ class ShelfGenerator:
         
         
     def generateshelves(self):
-        self.shelvesOrders = self.random.sample(range(1, 64), 3)
+        shelves = rand.sample(range(1, 64), 3)
+        self.shelvesOrders = shelves
         self.shelvesOrders.sort() #sorted list
         
     
@@ -113,7 +114,7 @@ class WarehouseagentFunction:
     
     def __init__(self,shelvesOrders,warehouse):
         self.location = "1"
-        self.shelvesOrders = shelvesOrders.shelvesOrders
+        self.shelvesOrders = shelvesOrders
         self.warehouse = warehouse
         self.cost = 0
         self.visited = []
@@ -134,14 +135,14 @@ class WarehouseagentFunction:
         l = 0
         while not shelfgoal:
             n = frontier.pop(0)
-            if n['shelfLoc'] == str(self.shelvesOrders[self.shelfNum]):
+            if n['shelfLoc'] == str(self.shelvesOrders.shelvesOrders[self.shelfNum]):
                 shelfgoal = True
                 self.visited.append(n['shelfLoc'])
                 self.calculateWarehouseCost(shelfgoal, frontier, n, depthBound)
                 return n['shelfLoc']
         
-            #if self.checkWarehousepath(str(self.shelvesOrders.warehouse),n['shelfLoc']):
-             #   return self.goToDest(str(self.shelvesOrders.warehouse), n['shelfLoc']) 
+            if self.checkWarehousepath(str(self.shelvesOrders.shelvesOrders[self.shelfNum]),n['shelfLoc']):
+                return self.goToDest(str(self.shelvesOrders.shelvesOrders[self.shelfNum]), n['shelfLoc']) 
             
             if n['warehouseDepth'] < depthBound:
                 self.warehouse.clearChildNodes(n['shelfLoc'])
@@ -219,33 +220,23 @@ class WarehouseagentFunction:
             if currLoc in i and dest in i:
                 if i.index(currLoc) > i.index(dest):
                     if self.location  != currLoc:
-                        for k in self.warehouse.shelvesdictionary[currLoc].adjacentnodes:
-                            if k['name'] == self.warehouse.shelvesdictionary[currLoc].parentnode:
-                                self.cost = self.cost + int(k['cost'])
+                        self.cost = self.cost + 1
                     for j in range(i.index(currLoc), (i.index(dest)),-1):
                         self.warehouse.shelvesdictionary[i[j-1]].parentnode = self.warehouse.shelvesdictionary[i[j]].name
-                        
-                        for k in self.warehouse.shelvesdictionary[i[j-1]].adjacentnodes:
-                            if k['name'] == self.warehouse.shelvesdictionary[i[j-1]].parentnode:
-                                self.cost = self.cost + int(k['cost'])
+                        self.cost = self.cost + 1
                     return dest
                 else:
                     if self.location != currLoc:
-                        for k in self.warehouse.shelvesdictionary[currLoc].adjacentnodes:
-                            if k['name'] == self.warehouse.shelvesdictionary[currLoc].parentnode:
-                                self.cost = self.cost + int(k['cost'])
-                    
-                    
+                        self.cost = self.cost + 1
                     for j in range(i.index(currLoc), (i.index(dest))):
-                        
                         self.warehouse.shelvesdictionary[i[j+1]].parentnode = self.warehouse.shelvesdictionary[i[j]].name
-                        for k in self.warehouse.shelvesdictionary[i[j+1]].adjacentnodes:
-                            if k['name'] == self.warehouse.shelvesdictionary[i[j+1]].parentnode:
-                                self.cost = self.cost + int(k['cost'])
+                        self.cost = self.cost + 1
                     return dest
         
                 
-
+    def returnToDoor(self):
+        a =0
+         
 '''
 division names |    warehouse names
 order is |          shelforder
@@ -271,10 +262,60 @@ def main():
     #b = warehouse.shelvesdictionary['6']  #access node and 
     #print(b.name)  #prints the node name
     item = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item)
+    
+    agent.shelfNum = 1
+    item2 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item2)
+    
+    agent.shelfNum = 2
+    item3 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item3) 
+    
+    shelvesOrders.generateshelves()
+    print(shelvesOrders.shelvesOrders)
+    agent.shelfNum = 0
+    item = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item)
+    
+    agent.shelfNum = 1
+    item2 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item2)
+    
+    agent.shelfNum = 2
+    item3 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item3)
+    
+    shelvesOrders.generateshelves()
+    print(shelvesOrders.shelvesOrders)
+    agent.shelfNum = 0
+    item = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item)
+    
+    agent.shelfNum = 1
+    item2 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item2)
+    
+    agent.shelfNum = 2
+    item3 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item3)
+    
+    shelvesOrders.generateshelves()
+    print(shelvesOrders.shelvesOrders)
+    agent.shelfNum = 0
+    item = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item)
+    
+    agent.shelfNum = 1
+    item2 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item2)
+    
+    agent.shelfNum = 2
+    item3 = agent.idsWarehouse()
+    agent.addToWarehousePathMem(item3)
+    print(agent.cost)
     
     
-    
-        
     
 if __name__ == "__main__":
     main()        
