@@ -557,8 +557,116 @@ def q5():
     print(str(len(agent.visited)))
 
 def q6():
-    a = 0
-
+    
+    order = customerOrder(rand)
+    division = divisions()
+    af = agentFunction(order, division)
+    shelvesOrders = ShelfGenerator(rand)
+    warehouse = Warehouse() 
+    agent= WarehouseagentFunction(shelvesOrders, warehouse)
+    vistedDivisionPaths = {}
+    totalDivisionCosts = {}
+    
+    vistedWarehousePaths = {}
+    totalWarehouseCosts = {}
+    
+    for i in range(0,100):
+        
+        
+        
+        
+        order.generateDivision()
+        goal = af.idsDivision()
+        af.addToPathMem(goal)
+        
+        totalDivisionCosts[i] = af.cost
+        af.cost = 0
+        
+        vistedDivisionPaths[i] = af.visited
+        af.visited = []
+        
+        shelvesOrders.generateshelves()
+        
+        sumvisited = []
+        sumcost = 0
+        for j in range(0,3): 
+            agent.shelfNum = j
+            item = agent.idsWarehouse()
+            agent.addToWarehousePathMem(item)
+            agent.returnToDoor(item)
+            sumvisited.append(agent.visited[:])
+            vistedWarehousePaths[str(i) + ':' + str(j)] = agent.visited
+            agent.visited = []
+            sumcost = sumcost + agent.cost
+            totalWarehouseCosts[str(i) + ':' + str(j)] = agent.cost
+            agent.cost = 0
+        
+        vistedWarehousePaths['sum' + str(i)] = sumvisited
+        totalWarehouseCosts['sum' + str(i)] = sumcost
+     
+        
+    smallestCostDivision = 0
+    smallestCostWarehouseItem = 0 
+    smallestCostWarehouse3Item = 0
+    
+    largestCostDivision = 0
+    largestCostWarehouseItem = 0 
+    largestCostWarehouse3Item = 0
+    
+    shortestPathDivision = 0
+    shortestPathWarehouseItem = 0
+    shortestPathWarehouse3Item = 0
+    
+    longestPathDivision = 0
+    longestPathWarehouseItem = 0
+    longestPathWarehouse3Item = 0
+    for i in range(0,100):
+        
+        
+        if (smallestCostDivision == 0):
+            smallestCostDivision = totalDivisionCosts[i]
+        elif(smallestCostDivision > totalDivisionCosts[i]):
+            smallestCostDivision = totalDivisionCosts[i]
+        if (largestCostDivision < totalDivisionCosts[i]):
+            largestCostDivision = totalDivisionCosts[i]
+            
+        if (shortestPathDivision == 0):
+            shortestPathDivision = len(vistedDivisionPaths[i])
+        elif(shortestPathDivision > len(vistedDivisionPaths[i])):
+            shortestPathDivision = len(vistedDivisionPaths[i])
+        if (longestPathDivision < len(vistedDivisionPaths[i])):
+            longestPathDivision = vistedDivisionPaths[i]
+        
+        if (smallestCostWarehouse3Item == 0):
+            smallestCostWarehouse3Item = totalWarehouseCosts['sum' + str(i)]
+        elif(smallestCostWarehouse3Item > totalWarehouseCosts['sum' + str(i)]):
+            smallestCostWarehouse3Item = totalWarehouseCosts['sum' + str(i)]
+        if (largestCostWarehouse3Item < totalWarehouseCosts['sum' + str(i)]):
+            largestCostWarehouse3Item = totalWarehouseCosts['sum' + str(i)]
+            
+        if (shortestPathWarehouse3Item == 0):
+            shortestPathWarehouse3Item = len(vistedWarehousePaths['sum' + str(i)])
+        elif(shortestPathWarehouse3Item > len(vistedWarehousePaths['sum' + str(i)])):
+            shortestPathWarehouse3Item = len(vistedWarehousePaths['sum' + str(i)])
+        if (longestPathWarehouse3Item < len(vistedWarehousePaths['sum' + str(i)])):
+            longestPathWarehouse3Item = vistedWarehousePaths['sum' + str(i)]
+            
+        for j in range(0,3):
+            if (smallestCostWarehouseItem == 0):
+                smallestCostWarehouseItem = totalWarehouseCosts[str(i) + ':' + str(j)] 
+            elif(smallestCostWarehouseItem > totalWarehouseCosts[str(i) + ':' + str(j)] ):
+                smallestCostWarehouseItem = totalWarehouseCosts[str(i) + ':' + str(j)] 
+            if (largestCostWarehouseItem < totalWarehouseCosts[str(i) + ':' + str(j)] ):
+                largestCostWarehouseItem = totalWarehouseCosts[str(i) + ':' + str(j)] 
+            
+            if (shortestPathWarehouseItem  == 0):
+                shortestPathWarehouseItem  = len(vistedWarehousePaths[str(i) + ':' + str(j)])
+            elif(shortestPathWarehouseItem  > len(vistedWarehousePaths[str(i) + ':' + str(j)])):
+                shortestPathWarehouseItem  = len(vistedWarehousePaths[str(i) + ':' + str(j)])
+            if (longestPathWarehouseItem < len(vistedWarehousePaths[str(i) + ':' + str(j)])):
+                longestPathWarehouseItem = len(vistedWarehousePaths[str(i) + ':' + str(j)])
+        
+        
 def main():
    q5()
    ''' 
