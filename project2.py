@@ -536,14 +536,14 @@ class agentFunction:
                     return dest
         
 def q5():
-    order = customerOrder()
+    order = customerOrder(rand)
     order.division = '6'
     division = divisions()
     
     af = agentFunction(order, division)
     goal = af.idsDivision()
-    print("Division Cost: " + af.cost)
-    print("Nodes visited: " + af.visited)
+    print("Division Cost: " + str(af.cost))
+    print("Nodes visited: " + str(af.visited))
     
     shelvesOrders = ShelfGenerator(rand)
     shelvesOrders.shelvesOrders.append('33')
@@ -552,11 +552,12 @@ def q5():
     agent= WarehouseagentFunction(shelvesOrders, warehouse)
     item = agent.idsWarehouse()
     agent.returnToDoor(item)
-    print(agent.visited)
-    print(agent.cost)
-    
+    print("Warehouse Cost: " + str(agent.cost))
+    print("Warehouse Visited: " + str(agent.visited))
+    print(str(len(agent.visited)))
+
 def q6():
-    
+    a = 0
 
 def main():
    q5()
