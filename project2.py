@@ -564,10 +564,10 @@ def q6():
     shelvesOrders = ShelfGenerator(rand)
     warehouse = Warehouse() 
     agent= WarehouseagentFunction(shelvesOrders, warehouse)
-    vistedDivisionPaths = {}
+    visitedDivisionPaths = {}
     totalDivisionCosts = {}
     
-    vistedWarehousePaths = {}
+    visitedWarehousePaths = {}
     totalWarehouseCosts = {}
     
     for i in range(0,100):
@@ -582,7 +582,7 @@ def q6():
         totalDivisionCosts[i] = af.cost
         af.cost = 0
         
-        vistedDivisionPaths[i] = af.visited
+        visitedDivisionPaths[i] = af.visited
         af.visited = []
         
         shelvesOrders.generateshelves()
@@ -594,14 +594,14 @@ def q6():
             item = agent.idsWarehouse()
             agent.addToWarehousePathMem(item)
             agent.returnToDoor(item)
-            sumvisited.append(agent.visited[:])
-            vistedWarehousePaths[str(i) + ':' + str(j)] = agent.visited
+            sumvisited = sumvisited + agent.visited
+            visitedWarehousePaths[str(i) + ':' + str(j)] = agent.visited
             agent.visited = []
             sumcost = sumcost + agent.cost
             totalWarehouseCosts[str(i) + ':' + str(j)] = agent.cost
             agent.cost = 0
         
-        vistedWarehousePaths['sum' + str(i)] = sumvisited
+        visitedWarehousePaths['sum' + str(i)] = sumvisited
         totalWarehouseCosts['sum' + str(i)] = sumcost
      
         
@@ -620,6 +620,14 @@ def q6():
     longestPathDivision = 0
     longestPathWarehouseItem = 0
     longestPathWarehouse3Item = 0
+    
+    averageCostDivision = 0
+    averageCostWarehouseItem = 0
+    averageCostWarehouse3Item = 0
+    
+    averagePathDivision = 0
+    averagePathWarehouseItem = 0
+    averagePathWarehouse3Item = 0
     for i in range(0,100):
         
         
@@ -629,13 +637,16 @@ def q6():
             smallestCostDivision = totalDivisionCosts[i]
         if (largestCostDivision < totalDivisionCosts[i]):
             largestCostDivision = totalDivisionCosts[i]
-            
+        averageCostDivision = averageCostDivision + totalDivisionCosts[i]
+        
         if (shortestPathDivision == 0):
-            shortestPathDivision = len(vistedDivisionPaths[i])
-        elif(shortestPathDivision > len(vistedDivisionPaths[i])):
-            shortestPathDivision = len(vistedDivisionPaths[i])
-        if (longestPathDivision < len(vistedDivisionPaths[i])):
-            longestPathDivision = vistedDivisionPaths[i]
+            shortestPathDivision = len(visitedDivisionPaths[i])
+        elif(shortestPathDivision > len(visitedDivisionPaths[i])):
+            shortestPathDivision = len(visitedDivisionPaths[i])
+        if (longestPathDivision < len(visitedDivisionPaths[i])):
+            longestPathDivision = len(visitedDivisionPaths[i])
+        averagePathDivision = averagePathDivision + len(visitedDivisionPaths[i])
+        
         
         if (smallestCostWarehouse3Item == 0):
             smallestCostWarehouse3Item = totalWarehouseCosts['sum' + str(i)]
@@ -643,14 +654,18 @@ def q6():
             smallestCostWarehouse3Item = totalWarehouseCosts['sum' + str(i)]
         if (largestCostWarehouse3Item < totalWarehouseCosts['sum' + str(i)]):
             largestCostWarehouse3Item = totalWarehouseCosts['sum' + str(i)]
+        averageCostWarehouse3Item = averageCostWarehouse3Item +  totalWarehouseCosts['sum' + str(i)]
             
+         
         if (shortestPathWarehouse3Item == 0):
-            shortestPathWarehouse3Item = len(vistedWarehousePaths['sum' + str(i)])
-        elif(shortestPathWarehouse3Item > len(vistedWarehousePaths['sum' + str(i)])):
-            shortestPathWarehouse3Item = len(vistedWarehousePaths['sum' + str(i)])
-        if (longestPathWarehouse3Item < len(vistedWarehousePaths['sum' + str(i)])):
-            longestPathWarehouse3Item = vistedWarehousePaths['sum' + str(i)]
+            shortestPathWarehouse3Item = len(visitedWarehousePaths['sum' + str(i)])
+        elif(shortestPathWarehouse3Item > len(visitedWarehousePaths['sum' + str(i)])):
+            shortestPathWarehouse3Item = len(visitedWarehousePaths['sum' + str(i)])
+        if (longestPathWarehouse3Item < len(visitedWarehousePaths['sum' + str(i)])):
+            longestPathWarehouse3Item = len(visitedWarehousePaths['sum' + str(i)])
+        averagePathWarehouse3Item = averagePathWarehouse3Item + len(visitedWarehousePaths['sum' + str(i)])
             
+        
         for j in range(0,3):
             if (smallestCostWarehouseItem == 0):
                 smallestCostWarehouseItem = totalWarehouseCosts[str(i) + ':' + str(j)] 
@@ -658,81 +673,51 @@ def q6():
                 smallestCostWarehouseItem = totalWarehouseCosts[str(i) + ':' + str(j)] 
             if (largestCostWarehouseItem < totalWarehouseCosts[str(i) + ':' + str(j)] ):
                 largestCostWarehouseItem = totalWarehouseCosts[str(i) + ':' + str(j)] 
+            averageCostWarehouseItem = averageCostWarehouseItem + totalWarehouseCosts[str(i) + ':' + str(j)]
+            
             
             if (shortestPathWarehouseItem  == 0):
-                shortestPathWarehouseItem  = len(vistedWarehousePaths[str(i) + ':' + str(j)])
-            elif(shortestPathWarehouseItem  > len(vistedWarehousePaths[str(i) + ':' + str(j)])):
-                shortestPathWarehouseItem  = len(vistedWarehousePaths[str(i) + ':' + str(j)])
-            if (longestPathWarehouseItem < len(vistedWarehousePaths[str(i) + ':' + str(j)])):
-                longestPathWarehouseItem = len(vistedWarehousePaths[str(i) + ':' + str(j)])
+                shortestPathWarehouseItem  = len(visitedWarehousePaths[str(i) + ':' + str(j)])
+            elif(shortestPathWarehouseItem  > len(visitedWarehousePaths[str(i) + ':' + str(j)])):
+                shortestPathWarehouseItem  = len(visitedWarehousePaths[str(i) + ':' + str(j)])
+            if (longestPathWarehouseItem < len(visitedWarehousePaths[str(i) + ':' + str(j)])):
+                longestPathWarehouseItem = len(visitedWarehousePaths[str(i) + ':' + str(j)])
+            averagePathWarehouseItem = averagePathWarehouseItem + len(visitedWarehousePaths[str(i) + ':' + str(j)])
         
+    print("Shortest Cost Division: " + str(smallestCostDivision))
+    print("Shortest Cost Warehouse Item: " + str(smallestCostWarehouseItem))
+    print("Shortest Cost Warehouse 3 Item: " + str(smallestCostWarehouse3Item))
+    
+    print("Longest Cost Division:" + str(largestCostDivision))
+    print("Longest Cost Warehouse Item:" + str(largestCostWarehouseItem))
+    print("Longest Cost Warehouse 3 Item:" + str(largestCostWarehouse3Item))
+    
+    print("Shortest Path Division: " + str(shortestPathDivision))
+    print("Shortest Path Warehouse Item: " + str(shortestPathWarehouseItem))
+    print("Shortest Path Warehouse 3 Item: " + str(shortestPathWarehouse3Item))
+    
+    print("Longest Path Division: " + str(longestPathDivision))
+    print("Longest Path Warehouse Item: " + str(longestPathWarehouseItem))
+    print("Longest Path Warehouse 3 Item: " + str(longestPathWarehouse3Item))
+    
+    print("Average Cost Division: " + str((averageCostDivision/100)))
+    print("Average Cost Warehouse Item: " + str((averageCostWarehouseItem/300)))
+    print("Average Cost Warehouse 3 Item: " + str((averageCostWarehouse3Item/100)))
+    
+    print("Average Path Division: " + str((averagePathDivision/100)))
+    print("Average Path Warehouse Item: " + str((averagePathWarehouseItem/300)))
+    print("Average Path Warehouse 3 Item: " + str((averagePathWarehouse3Item/100)))
+    
         
 def main():
-   q5()
-   ''' 
-   order = customerOrder(rand)
-   order.generateDivision()
+   x = input("Enter 5 for Question 5 and Enter 6 for Question 6: ")
+   if x == '5':
+       q5()
+   elif x == '6':
+       q6()
+   else:
+       print("<Input Error>")
    
-   division = divisions()
-   af = agentFunction(order, division)
-   print ("Start: " + af.location)
-   goal = af.idsDivision()
-   af.addToPathMem(goal)
-   print(af.pathMem)
-   print (goal)
-   print (af.cost)
-   print(af.visited)
-   
-   af.visited = []
-   order.generateDivision()
-   print ("Start: " + af.location)
-   goal = af.idsDivision()
-   af.addToPathMem(goal)
-   print(af.pathMem)
-   print (goal)
-   print (af.cost)
-   print(af.visited)
-   
-   af.visited = []
-   order.generateDivision()
-   print ("Start: " + af.location)
-   goal = af.idsDivision()
-   af.addToPathMem(goal)
-   print(af.pathMem)
-   print (goal)
-   print (af.cost)
-   print(af.visited)
-   
-   af.visited =[]
-   order.generateDivision()
-   print ("Start: " + af.location)
-   goal = af.idsDivision()
-   af.addToPathMem(goal)
-   print(af.pathMem)
-   print (goal)
-   print (af.cost)
-   print(af.visited)
-   
-   af.visited =[]
-   order.generateDivision()
-   print ("Start: " + af.location)
-   goal = af.idsDivision()
-   af.addToPathMem(goal)
-   print(af.pathMem)
-   print (goal)
-   print (af.cost)
-   print(af.visited)
-   
-   af.visited =[]
-   order.generateDivision()
-   print ("Start: " + af.location)
-   goal = af.idsDivision()
-   af.addToPathMem(goal)
-   print(af.pathMem)
-   print (goal)
-   print (af.cost)
-   print(af.visited)
-'''
 if __name__ == "__main__":
     main()
     
