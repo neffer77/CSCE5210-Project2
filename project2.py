@@ -535,10 +535,32 @@ class agentFunction:
                                 self.visited.insert(0,self.divisions.divisionsDict[i[j+1]].name)
                     return dest
         
-#class percept:
- #   def __init__(self):
+def q5():
+    order = customerOrder()
+    order.division = '6'
+    division = divisions()
+    
+    af = agentFunction(order, division)
+    goal = af.idsDivision()
+    print("Division Cost: " + af.cost)
+    print("Nodes visited: " + af.visited)
+    
+    shelvesOrders = ShelfGenerator(rand)
+    shelvesOrders.shelvesOrders.append('33')
+    warehouse = Warehouse() 
+    
+    agent= WarehouseagentFunction(shelvesOrders, warehouse)
+    item = agent.idsWarehouse()
+    agent.returnToDoor(item)
+    print(agent.visited)
+    print(agent.cost)
+    
+def q6():
+    
 
 def main():
+   q5()
+   ''' 
    order = customerOrder(rand)
    order.generateDivision()
    
@@ -601,7 +623,7 @@ def main():
    print (goal)
    print (af.cost)
    print(af.visited)
-    
+'''
 if __name__ == "__main__":
     main()
     
