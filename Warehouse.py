@@ -155,7 +155,7 @@ class WarehouseagentFunction:
                     frontier.insert(s,{'shelfLoc':i.name, 'warehouseDepth':l})
                     s = s + 1
             
-            self.visited.append(n['shelfLoc'])
+            self.visited.insert(0, n['shelfLoc'])
             self.calculateWarehouseCost(shelfgoal, frontier, n, depthBound)
             
             if len(frontier) == 0:
@@ -167,6 +167,7 @@ class WarehouseagentFunction:
 
     def calculateWarehouseCost(self,shelfgoal,frontier,n,depthBound):
         v = self.visited.pop(0)
+        self.visited.insert(0, v)
         node = self.warehouse.shelvesdictionary[v]
         if node.parentnode == "":
             self.cost = self.cost + 0

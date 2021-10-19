@@ -193,11 +193,12 @@ class agentFunction:
             n = frontier.pop(0)
             if n['loc'] == str(self.customerOrder.division):
                 goal = True
-                self.visited.append(n['loc'])
+                self.visited.insert(0,n['loc'])
                 self.calculateCost(goal, frontier,n,depthBound)
                 return n['loc']
             
             if self.checkPath(str(self.customerOrder.division),n['loc']):
+                self.visited.insert(0,n['loc'])
                 return self.goToDest(str(self.customerOrder.division), n['loc'])
                 
             if n['depth'] < depthBound:
@@ -210,7 +211,7 @@ class agentFunction:
                     frontier.insert(s,{'loc':i.name, 'depth':l})
                     s = s + 1
                     
-            self.visited.append(n['loc'])
+            self.visited.insert(0,n['loc'])
             self.calculateCost(goal, frontier,n,depthBound)
             
             if len(frontier) == 0:
@@ -220,53 +221,56 @@ class agentFunction:
     
     #counted forward and backward and combined
     def calculateCost(self,goal,frontier,n,depthBound):
-        for i in self.visited:
-            v = self.visited.pop(0)
-            node = self.divisions.divisionsDict[v]
-            if node.parentnode == "":
-                self.cost = self.cost + 0
-            elif goal == True:
-                for i in self.divisions.divisionsDict[node.name].adjacentnodes:
-                    if i['name'] == node.parentnode:
-                        self.cost = self.cost + int(i['cost'])
-            else:
-                #add cost to reach node
-                for i in self.divisions.divisionsDict[node.name].adjacentnodes:
-                    if i['name'] == node.parentnode:
-                        self.cost = self.cost + int(i['cost'])
+        v = self.visited.pop(0)
+        self.visited.insert(0, v)
+        node = self.divisions.divisionsDict[v]
+        if node.parentnode == "":
+            self.cost = self.cost + 0
+        elif goal == True:
+            for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                if i['name'] == node.parentnode:
+                    self.cost = self.cost + int(i['cost'])
+        else:
+            #add cost to reach node
+            for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                if i['name'] == node.parentnode:
+                    self.cost = self.cost + int(i['cost'])
                        
                 
-                #add cost to go back to parent node
-                if n['depth'] == depthBound:
-                    for i in self.divisions.divisionsDict[node.name].adjacentnodes:
-                        if i['name'] == node.parentnode:
-                            self.cost = self.cost + int(i['cost'])
+            #add cost to go back to parent node
+            if n['depth'] == depthBound:
+                for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                    if i['name'] == node.parentnode:
+                        self.cost = self.cost + int(i['cost'])
+                        self.visited.insert(0, node.parentnode)
                             
         
                 #add cost to traverse to other side of the tree
-                if len(frontier) > 0 and self.divisions.divisionsDict[node.parentnode].parentnode != '':
-                        #print (node.name)
-                        t = node
-                        while self.divisions.divisionsDict[frontier[0]['loc']].parentnode != t.parentnode and self.divisions.divisionsDict[frontier[0]['loc']].parentnode != t.name :
-                                t = self.divisions.divisionsDict[t.parentnode]
-                                for i in self.divisions.divisionsDict[t.name].adjacentnodes:
-                                    if i['name'] == t.parentnode:
-                                        self.cost = self.cost + int(i['cost'])
+            if len(frontier) > 0 and self.divisions.divisionsDict[node.parentnode].parentnode != '':
+                t = node
+                while self.divisions.divisionsDict[frontier[0]['loc']].parentnode != t.parentnode and self.divisions.divisionsDict[frontier[0]['loc']].parentnode != t.name :
+                    t = self.divisions.divisionsDict[t.parentnode]
+                    self.visited.insert(0, t.parentnode)
+                    for i in self.divisions.divisionsDict[t.name].adjacentnodes:
+                        if i['name'] == t.parentnode:
+                            self.cost = self.cost + int(i['cost'])
                 
                 #add cost to traverse back from right side of tree
-                if len(frontier) == 0:
-                    t = node
-                    while self.divisions.divisionsDict[t.parentnode].parentnode != '':
-                        t = self.divisions.divisionsDict[t.parentnode]
-                        for i in self.divisions.divisionsDict[t.name].adjacentnodes:
-                            if i['name'] == t.parentnode:
-                                self.cost = self.cost + int(i['cost'])
-                               
-                #add cost to traverse back from a node with no children                
-                if n['depth'] != depthBound and len(self.divisions.divisionsDict[node.name].childnodes) == 0:
-                    for i in self.divisions.divisionsDict[node.name].adjacentnodes:
-                        if i['name'] == node.parentnode:
+            if len(frontier) == 0:
+                t = node
+                while self.divisions.divisionsDict[t.parentnode].parentnode != '':
+                    t = self.divisions.divisionsDict[t.parentnode]
+                    self.visited.insert(0, t.parentnode)
+                    for i in self.divisions.divisionsDict[t.name].adjacentnodes:
+                        if i['name'] == t.parentnode:
                             self.cost = self.cost + int(i['cost'])
+                               
+            #add cost to traverse back from a node with no children                
+            if n['depth'] != depthBound and len(self.divisions.divisionsDict[node.name].childnodes) == 0:
+                for i in self.divisions.divisionsDict[node.name].adjacentnodes:
+                    if i['name'] == node.parentnode:
+                        self.cost = self.cost + int(i['cost'])
+                        self.visited.insert(0, node.parentnode)
                             
    
          
@@ -299,6 +303,7 @@ class agentFunction:
                         for k in self.divisions.divisionsDict[i[j-1]].adjacentnodes:
                             if k['name'] == self.divisions.divisionsDict[i[j-1]].parentnode:
                                 self.cost = self.cost + int(k['cost'])
+                                self.visited.insert(0,self.divisions.divisionsDict[i[j-1]].name)
                     return dest
                 else:
                     if self.location != currLoc:
@@ -313,6 +318,7 @@ class agentFunction:
                         for k in self.divisions.divisionsDict[i[j+1]].adjacentnodes:
                             if k['name'] == self.divisions.divisionsDict[i[j+1]].parentnode:
                                 self.cost = self.cost + int(k['cost'])
+                                self.visited.insert(0,self.divisions.divisionsDict[i[j+1]].name)
                     return dest
         
 #class percept:
@@ -330,51 +336,57 @@ def main():
    print(af.pathMem)
    print (goal)
    print (af.cost)
+   print(af.visited)
    
+   af.visited = []
    order.generateDivision()
-   af.location = goal
    print ("Start: " + af.location)
-   af.cost = 0
-   division.clearParentNodes(af.location)
    goal = af.idsDivision()
    af.addToPathMem(goal)
    print(af.pathMem)
    print (goal)
    print (af.cost)
+   print(af.visited)
    
+   af.visited = []
    order.generateDivision()
-   af.location = goal
    print ("Start: " + af.location)
-   af.cost = 0
-   division.clearParentNodes(af.location)
    goal = af.idsDivision()
    af.addToPathMem(goal)
    print(af.pathMem)
    print (goal)
    print (af.cost)
+   print(af.visited)
    
+   af.visited =[]
    order.generateDivision()
-   af.location = goal
    print ("Start: " + af.location)
-   af.cost = 0
-   division.clearParentNodes(af.location)
    goal = af.idsDivision()
    af.addToPathMem(goal)
    print(af.pathMem)
    print (goal)
    print (af.cost)
+   print(af.visited)
    
+   af.visited =[]
    order.generateDivision()
-   af.location = goal
    print ("Start: " + af.location)
-   af.cost = 0
-   division.clearParentNodes(af.location)
    goal = af.idsDivision()
    af.addToPathMem(goal)
    print(af.pathMem)
    print (goal)
    print (af.cost)
+   print(af.visited)
    
+   af.visited =[]
+   order.generateDivision()
+   print ("Start: " + af.location)
+   goal = af.idsDivision()
+   af.addToPathMem(goal)
+   print(af.pathMem)
+   print (goal)
+   print (af.cost)
+   print(af.visited)
     
 if __name__ == "__main__":
     main()
