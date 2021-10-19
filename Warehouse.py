@@ -137,11 +137,12 @@ class WarehouseagentFunction:
             n = frontier.pop(0)
             if n['shelfLoc'] == str(self.shelvesOrders.shelvesOrders[self.shelfNum]):
                 shelfgoal = True
-                self.visited.append(n['shelfLoc'])
+                self.visited.insert(0,n['shelfLoc'])
                 self.calculateWarehouseCost(shelfgoal, frontier, n, depthBound)
                 return n['shelfLoc']
         
             if self.checkWarehousepath(str(self.shelvesOrders.shelvesOrders[self.shelfNum]),n['shelfLoc']):
+                self.visited.insert(0,n['shelfLoc'])
                 return self.goToDest(str(self.shelvesOrders.shelvesOrders[self.shelfNum]), n['shelfLoc']) 
             
             if n['warehouseDepth'] < depthBound:
@@ -180,7 +181,7 @@ class WarehouseagentFunction:
             #add cost for going back to parent node
             if n['warehouseDepth']  == depthBound:
                 self.cost = self.cost + 1
-                    
+                self.visited.insert(0, node.parentnode)    
             #add cost to traverse to other side of the tree
             if len(frontier) > 0 and self.warehouse.shelvesdictionary[node.parentnode].parentnode != '':
                     
@@ -189,17 +190,18 @@ class WarehouseagentFunction:
                 while self.warehouse.shelvesdictionary[frontier[0]['shelfLoc']].parentnode != t.parentnode and self.warehouse.shelvesdictionary[frontier[0]['shelfLoc']].parentnode != t.name :            
                     t = self.warehouse.shelvesdictionary[t.parentnode]
                     self.cost = self.cost + 1
-            
+                    self.visited.insert(0, t.parentnode)
             #add cost to traverse back from right side of tree
             if len(frontier) == 0:
                 t = node
                 while self.warehouse.shelvesdictionary[t.parentnode].parentnode != '':
                     t = self.warehouse.shelvesdictionary[t.parentnode]
                     self.cost = self.cost + 1
-                               
+                    self.visited.insert(0, t.parentnode)           
             #add cost to traverse back from a node with no children                
             if n['warehouseDepth'] != depthBound and len(self.warehouse.shelvesdictionary[node.name].childnodes) == 0:
                 self.cost = self.cost + 1
+                self.visited.insert(0, node.parentnode)
 
     def addToWarehousePathMem(self,dest):
         shelfpath = []
@@ -225,6 +227,7 @@ class WarehouseagentFunction:
                     for j in range(i.index(currLoc), (i.index(dest)),-1):
                         self.warehouse.shelvesdictionary[i[j-1]].parentnode = self.warehouse.shelvesdictionary[i[j]].name
                         self.cost = self.cost + 1
+                        self.visited.insert(0, self.warehouse.shelvesdictionary[i[j-1]].name)
                     return dest
                 else:
                     if self.location != currLoc:
@@ -232,6 +235,7 @@ class WarehouseagentFunction:
                     for j in range(i.index(currLoc), (i.index(dest))):
                         self.warehouse.shelvesdictionary[i[j+1]].parentnode = self.warehouse.shelvesdictionary[i[j]].name
                         self.cost = self.cost + 1
+                        self.visited.insert(0, self.warehouse.shelvesdictionary[i[j+1]].name)
                     return dest
         
                 
@@ -245,6 +249,7 @@ class WarehouseagentFunction:
             arr.sort()
             node = self.warehouse.shelvesdictionary[str(arr[0])]
             self.cost = self.cost + 1
+            self.visited.insert(0, node.name)
             if node.name == '1':
                 return False
         
@@ -276,57 +281,70 @@ def main():
     item = agent.idsWarehouse()
     agent.addToWarehousePathMem(item)
     agent.returnToDoor(item)
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 1
     item2 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item2)
-    
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 2
     item3 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item3) 
-    
+    print(agent.visited)
+    agent.visited = []
     shelvesOrders.generateshelves()
     print(shelvesOrders.shelvesOrders)
     agent.shelfNum = 0
     item = agent.idsWarehouse()
     agent.addToWarehousePathMem(item)
-    
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 1
     item2 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item2)
-    
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 2
     item3 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item3)
-    
+    print(agent.visited)
+    agent.visited = []
     shelvesOrders.generateshelves()
     print(shelvesOrders.shelvesOrders)
     agent.shelfNum = 0
     item = agent.idsWarehouse()
     agent.addToWarehousePathMem(item)
-    
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 1
     item2 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item2)
-    
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 2
     item3 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item3)
-    
+    print(agent.visited)
+    agent.visited = []
     shelvesOrders.generateshelves()
     print(shelvesOrders.shelvesOrders)
     agent.shelfNum = 0
     item = agent.idsWarehouse()
     agent.addToWarehousePathMem(item)
-    
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 1
     item2 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item2)
-    
+    print(agent.visited)
+    agent.visited = []
     agent.shelfNum = 2
     item3 = agent.idsWarehouse()
     agent.addToWarehousePathMem(item3)
     print(agent.cost)
-    
+    print(agent.visited)
+    agent.visited = []
     
     
 if __name__ == "__main__":
