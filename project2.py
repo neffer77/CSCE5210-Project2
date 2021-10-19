@@ -584,6 +584,8 @@ def q6():
         
         visitedDivisionPaths[i] = af.visited
         af.visited = []
+        af.location = goal
+        division.clearParentNodes(af.location)
         
         shelvesOrders.generateshelves()
         
@@ -594,7 +596,7 @@ def q6():
             item = agent.idsWarehouse()
             agent.addToWarehousePathMem(item)
             agent.returnToDoor(item)
-            sumvisited = sumvisited + agent.visited
+            sumvisited = agent.visited + sumvisited
             visitedWarehousePaths[str(i) + ':' + str(j)] = agent.visited
             agent.visited = []
             sumcost = sumcost + agent.cost
